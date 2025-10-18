@@ -28,12 +28,16 @@ class _ShoppingCartState extends State<ShoppingCart> {
 
   void addItem(String id, String name, double price, {double discount = 0.0}) {
     setState(() {
-      _items.add(
-        CartItem(id: id, name: name, price: price, discount: discount),
-      );
+      final index = _items.indexWhere((item) => item.id == id);
+      if (index != -1) {
+        _items[index].quantity += 1;
+      } else {
+        _items.add(
+          CartItem(id: id, name: name, price: price, discount: discount),
+        );
+      }
     });
   }
-
 
   void removeItem(String id) {
     setState(() {
@@ -61,23 +65,18 @@ class _ShoppingCartState extends State<ShoppingCart> {
   }
 
   double get subtotal {
-    double total = 0;
-    for (var item in _items) {
-      total += item.price * item.quantity;
-    }
-    return total;
+    return _items.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
   }
 
   double get totalDiscount {
-    double discount = 0;
-    for (var item in _items) {
-      discount += item.discount * item.quantity;
-    }
-    return discount;
+    return _items.fold(
+      0.0,
+      (sum, item) => sum + (item.price * item.discount * item.quantity),
+    );
   }
 
   double get totalAmount {
-    return subtotal + totalDiscount;
+    return subtotal - totalDiscount;
   }
 
   int get totalItems {
@@ -113,7 +112,6 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ],
         ),
         const SizedBox(height: 16),
-
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -138,7 +136,7 @@ class _ShoppingCartState extends State<ShoppingCart> {
               ),
               const SizedBox(height: 8),
               Text('Subtotal: \$${subtotal.toStringAsFixed(2)}'),
-              Text('Total Discount: \$${totalDiscount.toStringAsFixed(2)}'),
+              Text('Total Discount: -\$${totalDiscount.toStringAsFixed(2)}'),
               const Divider(),
               Text(
                 'Total Amount: \$${totalAmount.toStringAsFixed(2)}',
@@ -151,16 +149,18 @@ class _ShoppingCartState extends State<ShoppingCart> {
           ),
         ),
         const SizedBox(height: 16),
-
         _items.isEmpty
             ? const Center(child: Text('Cart is empty'))
             : ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _items.length,
                 itemBuilder: (context, index) {
                   final item = _items[index];
                   final itemTotal = item.price * item.quantity;
+                  final itemDiscount =
+                      item.price * item.discount * item.quantity;
+                  final finalItemTotal = itemTotal - itemDiscount;
 
                   return Card(
                     child: ListTile(
@@ -176,7 +176,9 @@ class _ShoppingCartState extends State<ShoppingCart> {
                               'Discount: ${(item.discount * 100).toStringAsFixed(0)}%',
                               style: const TextStyle(color: Colors.green),
                             ),
-                          Text('Item Total: \$${itemTotal.toStringAsFixed(2)}'),
+                          Text(
+                            'Item Total: \$${finalItemTotal.toStringAsFixed(2)}',
+                          ),
                         ],
                       ),
                       trailing: Row(
