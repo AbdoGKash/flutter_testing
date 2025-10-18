@@ -16,24 +16,20 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
 
   final List<String> _cities = ['New York', 'London', 'Tokyo', 'Invalid City'];
 
-  double celsiusToFahrenheit(double celsius) {
-    return celsius * 9 / 5;
-  }
+  double celsiusToFahrenheit(double celsius) => (celsius * 9 / 5) + 32;
 
-  double fahrenheitToCelsius(double fahrenheit) {
-    return fahrenheit - 32 * 5 / 9;
-  }
+  double fahrenheitToCelsius(double fahrenheit) => (fahrenheit - 32) * 5 / 9;
 
-  // Simulate API call that sometimes returns null or malformed data
+  // Simulated API
   Future<Map<String, dynamic>?> _fetchWeatherData(String city) async {
     await Future.delayed(const Duration(seconds: 2));
 
     if (city == 'Invalid City') {
-      return null;
+      return null; // simulate invalid response
     }
 
     if (DateTime.now().millisecond % 4 == 0) {
-      return {'city': city, 'temperature': 22.5};
+      return {'city': city, 'temperature': 22.5}; // missing fields
     }
 
     return {
@@ -56,11 +52,29 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
       });
     }
 
-    final data = await _fetchWeatherData(_selectedCity);
-    setState(() {
-      _weatherData = WeatherData.fromJson(data);
-      _isLoading = false;
-    });
+    try {
+      final data = await _fetchWeatherData(_selectedCity);
+
+      if (data == null) {
+        throw Exception('No data received');
+      }
+
+      final weather = WeatherData.fromJson(data);
+      if (mounted) {
+        setState(() {
+          _weatherData = weather;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+          _weatherData = null;
+        });
+      }
+    }
   }
 
   @override
@@ -125,8 +139,16 @@ class _WeatherDisplayState extends State<WeatherDisplay> {
           ),
           const SizedBox(height: 16),
 
-          if (_isLoading && _error == null)
+          if (_isLoading)
             const Center(child: CircularProgressIndicator())
+          else if (_error != null)
+            Center(
+              child: Text(
+                'Error: $_error',
+                style: const TextStyle(color: Colors.red),
+                textAlign: TextAlign.center,
+              ),
+            )
           else if (_weatherData != null)
             Card(
               elevation: 4,
@@ -235,12 +257,25 @@ class WeatherData {
   });
 
   factory WeatherData.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      throw Exception('Weather data is null');
+    }
+
+    if (!json.containsKey('city') ||
+        !json.containsKey('temperature') ||
+        !json.containsKey('description') ||
+        !json.containsKey('humidity') ||
+        !json.containsKey('windSpeed') ||
+        !json.containsKey('icon')) {
+      throw Exception('Incomplete weather data');
+    }
+
     return WeatherData(
-      city: json!['city'],
-      temperatureCelsius: json['temperature'].toDouble(),
+      city: json['city'],
+      temperatureCelsius: (json['temperature'] as num).toDouble(),
       description: json['description'],
-      humidity: json['humidity'],
-      windSpeed: json['windSpeed'].toDouble(),
+      humidity: (json['humidity'] as num).toInt(),
+      windSpeed: (json['windSpeed'] as num).toDouble(),
       icon: json['icon'],
     );
   }
