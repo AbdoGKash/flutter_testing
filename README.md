@@ -1,15 +1,4 @@
-lib/
- ├── cart_manager.dart                # Business logic for managing shopping cart
- ├── weather_service.dart             # Simulated weather API service
- └── widgets/
-      ├── shopping_cart.dart          # Interactive shopping cart UI
-      ├── user_registration_form.dart # User registration form with validation
-      └── weather_display.dart        # Weather information UI
-
-test/
- ├── cart_manager_test.dart           # Unit tests for CartManager logic
- ├── validators_test.dart             # Unit tests for Validators class
- └── user_registration_form_test.dart # Widget tests for registration form
+<pre> ```plaintext flutter_testing_project/ ├── lib/ │ ├── cart_manager.dart │ ├── weather_service.dart │ └── widgets/ │ ├── shopping_cart.dart │ ├── user_registration_form.dart │ └── weather_display.dart ├── test/ │ ├── cart_manager_test.dart │ ├── validators_test.dart │ └── user_registration_form_test.dart └── README.md ``` </pre>
 
 
 
