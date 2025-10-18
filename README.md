@@ -54,3 +54,37 @@ flutter_testing_project/
 - Handles invalid/missing data gracefully.
 
 - Displays temperature, humidity, and wind speed.
+
+
+```
+| Test Type       | File                               | Purpose                                                     |
+| --------------- | ---------------------------------- | ----------------------------------------------------------- |
+| **Unit Test**   | `cart_manager_test.dart`           | Verifies business logic for adding/removing/updating items. |
+| **Unit Test**   | `validators_test.dart`             | Ensures email/password validation logic works correctly.    |
+| **Widget Test** | `user_registration_form_test.dart` | Tests full UI form behavior and validation messages.        |
+
+```
+
+# 🧰 Technologies Used
+
+- Flutter SDK
+
+- Dart
+
+- flutter_test (built-in testing framework)
+
+- Material Design Widgets
+
+# 🧑‍💻 Running the Tests
+
+- To execute all tests, run the following command in your terminal:
+
+```
+flutter test
+```
+
+- To run a specific test file, for example the cart logic:
+
+```
+flutter test test/cart_manager_test.dart
+```
