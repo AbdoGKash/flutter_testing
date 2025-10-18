@@ -1,16 +1,54 @@
-# flutter_testing
+lib/
+ ├── cart_manager.dart                # Business logic for managing shopping cart
+ ├── weather_service.dart             # Simulated weather API service
+ └── widgets/
+      ├── shopping_cart.dart          # Interactive shopping cart UI
+      ├── user_registration_form.dart # User registration form with validation
+      └── weather_display.dart        # Weather information UI
 
-A new Flutter project.
+test/
+ ├── cart_manager_test.dart           # Unit tests for CartManager logic
+ ├── validators_test.dart             # Unit tests for Validators class
+ └── user_registration_form_test.dart # Widget tests for registration form
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+#🧩 Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+###🛒 Shopping Cart
+
+Add, update, or remove products dynamically.
+
+Calculates subtotal, discounts, and total amount.
+
+Prevents negative quantities.
+
+Supports percentage-based discounts.
+
+###👤 User Registration Form
+
+Includes input validation for:
+
+Full name
+
+Email (regex-based)
+
+Password strength (uppercase, number, and special character)
+
+Password confirmation
+
+Shows loading indicator during async submission.
+
+Displays success or error messages.
+
+###🌦️ Weather Display
+
+Simulated API fetching (mocked for testing).
+
+Supports Celsius ↔ Fahrenheit conversion.
+
+Handles invalid/missing data gracefully.
+
+Displays temperature, humidity, and wind speed.
