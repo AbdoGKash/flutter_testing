@@ -17,14 +17,6 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
   bool _isLoading = false;
   String _message = '';
 
-  bool isValidEmail(String email) {
-    return email.contains('@');
-  }
-
-  bool isValidPassword(String password) {
-    return true;
-  }
-
   Future<void> _submitForm() async {
     setState(() {
       _isLoading = true;
@@ -40,6 +32,12 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
     });
   }
 
+  void _onSubmitPressed() {
+    if (_formKey.currentState!.validate()) {
+      _submitForm();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -50,6 +48,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextFormField(
+              key: const Key('nameField'),
               controller: _nameController,
               decoration: const InputDecoration(
                 labelText: 'Full Name',
@@ -67,6 +66,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              key: const Key('emailField'),
               controller: _emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
@@ -77,7 +77,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter your email';
                 }
-                if (!isValidEmail(value)) {
+                if (!Validators.isValidEmail(value)) {
                   return 'Please enter a valid email';
                 }
                 return null;
@@ -85,6 +85,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              key: const Key('passwordField'),
               controller: _passwordController,
               decoration: const InputDecoration(
                 labelText: 'Password',
@@ -96,7 +97,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a password';
                 }
-                if (!isValidPassword(value)) {
+                if (!Validators.isValidPassword(value)) {
                   return 'Password is too weak';
                 }
                 return null;
@@ -104,6 +105,7 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
             ),
             const SizedBox(height: 16),
             TextFormField(
+              key: const Key('confirmPasswordField'),
               controller: _confirmPasswordController,
               decoration: const InputDecoration(
                 labelText: 'Confirm Password',
@@ -122,13 +124,15 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
             ),
             const SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _submitForm,
+              key: const Key('registerButton'),
+              onPressed: _isLoading ? null : _onSubmitPressed,
               child: _isLoading
                   ? const CircularProgressIndicator()
                   : const Text('Register'),
             ),
             if (_message.isNotEmpty)
               Padding(
+                key: const Key('messageText'),
                 padding: const EdgeInsets.only(top: 16),
                 child: Text(
                   _message,
@@ -154,5 +158,19 @@ class _UserRegistrationFormState extends State<UserRegistrationForm> {
     _confirmPasswordController.dispose();
     _nameController.dispose();
     super.dispose();
+  }
+}
+
+class Validators {
+  static bool isValidEmail(String email) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    return emailRegex.hasMatch(email);
+  }
+
+  static bool isValidPassword(String password) {
+    final passwordRegex = RegExp(
+      r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$&*~]).{8,}$',
+    );
+    return passwordRegex.hasMatch(password);
   }
 }
